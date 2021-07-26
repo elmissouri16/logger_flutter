@@ -1,7 +1,7 @@
 part of logger_flutter;
 
 ListQueue<OutputEvent> _outputEventBuffer = ListQueue();
-int _bufferSize = 20;
+// int _bufferSize = 20;
 bool _initialized = false;
 
 class LogConsole extends StatefulWidget {
@@ -14,14 +14,14 @@ class LogConsole extends StatefulWidget {
   static void init({int bufferSize = 20}) {
     if (_initialized) return;
 
-    _bufferSize = bufferSize;
+    // _bufferSize = bufferSize;
     _initialized = true;
-    Logger.addOutputListener((e) {
-      if (_outputEventBuffer.length == bufferSize) {
-        _outputEventBuffer.removeFirst();
-      }
-      _outputEventBuffer.add(e);
-    });
+    // Logger.addOutputListener((e) {
+    //   if (_outputEventBuffer.length == bufferSize) {
+    //     _outputEventBuffer.removeFirst();
+    //   }
+    //   _outputEventBuffer.add(e);
+    // });
   }
 
   @override
@@ -38,7 +38,7 @@ class RenderedEvent {
 }
 
 class _LogConsoleState extends State<LogConsole> {
-  OutputCallback _callback;
+  // Function _callback;
 
   ListQueue<RenderedEvent> _renderedBuffer = ListQueue();
   List<RenderedEvent> _filteredBuffer = [];
@@ -46,7 +46,7 @@ class _LogConsoleState extends State<LogConsole> {
   var _scrollController = ScrollController();
   var _filterController = TextEditingController();
 
-  Level _filterLevel = Level.verbose;
+  Level? _filterLevel = Level.verbose;
   double _logFontSize = 14;
 
   var _currentId = 0;
@@ -57,16 +57,16 @@ class _LogConsoleState extends State<LogConsole> {
   void initState() {
     super.initState();
 
-    _callback = (e) {
-      if (_renderedBuffer.length == _bufferSize) {
-        _renderedBuffer.removeFirst();
-      }
+    // _callback = (e) {
+    //   if (_renderedBuffer.length == _bufferSize) {
+    //     _renderedBuffer.removeFirst();
+    //   }
 
-      _renderedBuffer.add(_renderEvent(e));
-      _refreshFilter();
-    };
+    //   _renderedBuffer.add(_renderEvent(e));
+    //   _refreshFilter();
+    // };
 
-    Logger.addOutputListener(_callback);
+    // Logger.addOutputListener(_callback);
 
     _scrollController.addListener(() {
       if (!_scrollListenerEnabled) return;
@@ -91,7 +91,7 @@ class _LogConsoleState extends State<LogConsole> {
 
   void _refreshFilter() {
     var newFilteredBuffer = _renderedBuffer.where((it) {
-      var logLevelMatches = it.level.index >= _filterLevel.index;
+      var logLevelMatches = it.level.index >= _filterLevel!.index;
       if (!logLevelMatches) {
         return false;
       } else if (_filterController.text.isNotEmpty) {
@@ -269,7 +269,7 @@ class _LogConsoleState extends State<LogConsole> {
                 value: Level.wtf,
               )
             ],
-            onChanged: (value) {
+            onChanged: (dynamic value) {
               _filterLevel = value;
               _refreshFilter();
             },
@@ -310,14 +310,14 @@ class _LogConsoleState extends State<LogConsole> {
 
   @override
   void dispose() {
-    Logger.removeOutputListener(_callback);
+    // Logger.removeOutputListener(_callback);
     super.dispose();
   }
 }
 
 class LogBar extends StatelessWidget {
-  final bool dark;
-  final Widget child;
+  final bool? dark;
+  final Widget? child;
 
   LogBar({this.dark, this.child});
 
@@ -328,15 +328,15 @@ class LogBar extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           boxShadow: [
-            if (!dark)
+            if (!dark!)
               BoxShadow(
-                color: Colors.grey[400],
+                color: Colors.grey[400]!,
                 blurRadius: 3,
               ),
           ],
         ),
         child: Material(
-          color: dark ? Colors.blueGrey[900] : Colors.white,
+          color: dark! ? Colors.blueGrey[900] : Colors.white,
           child: Padding(
             padding: EdgeInsets.fromLTRB(15, 8, 15, 8),
             child: child,
